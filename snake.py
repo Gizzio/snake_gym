@@ -20,10 +20,10 @@ class Food(NamedTuple):
 
 
 WALL = '#'
-SNAKE = '@'
-FOOD = 'f'
+SNAKE = 'S'
+FOOD = '@'
 X_START = 4
-Y_START = 5
+Y_START = 4
 
 # przenieść do Input
 
@@ -62,8 +62,13 @@ class Game():
         return tiles
 
     def get_state(self) -> np.array:
-        # TODO: getin ovservation matrices
-        raise NotImplementedError
+        sstate = np.zeros((self.boardW, self.boardH))
+        for point in self.snake.get_points():
+            sstate[point.x][point.y] = 1
+        fstate = np.zeros_like(sstate)
+        fstate[self.food.position.x][self.food.position.y] = 1
+
+        return np.array((sstate, fstate))
 
     def has_ended(self):
         return not self.snake.is_alive
@@ -158,7 +163,8 @@ class Snake():
         self.is_alive = False
 
     def get_points(self):
-        raise NotImplementedError
+        return self.body
+        #raise NotImplementedError
 
 
 class Renderer():
@@ -172,7 +178,6 @@ class Renderer():
 
     def close_window(self):
         curses.endwin()
-
 
     def init_screen(self):
         screen = curses.initscr()
