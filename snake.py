@@ -54,11 +54,6 @@ class Game():
 
     @property
     def tiles(self) -> list:
-        '''for obj in objects:
-            for tile in obj.tiles:
-                tiles.append(tile)
-        '''
-
         tiles = []
         for tile in self.snake.tiles:
             tiles.append(tile)
@@ -67,6 +62,7 @@ class Game():
         return tiles
 
     def get_state(self) -> np.array:
+        # TODO: getin ovservation matrices
         raise NotImplementedError
 
     def has_ended(self):
@@ -94,7 +90,7 @@ class Game():
 
     def _wall_collision(self):
         head = self.snake.body[0]
-        if head.x==0 or head.x==self.boardH-1 or head.y==0 or head.y==self.boardW-1:
+        if head.x == 0 or head.x == self.boardH-1 or head.y == 0 or head.y == self.boardW-1:
             return True
         else:
             return False
@@ -173,6 +169,10 @@ class Renderer():
         self.screen = self.init_screen()
         self.window = self.init_window(h, w)
         self._render_first_frame()
+
+    def close_window(self):
+        curses.endwin()
+
 
     def init_screen(self):
         screen = curses.initscr()

@@ -15,7 +15,9 @@ while True:
     game.update()
 
     if game.has_ended():
+        renderer.close_window()
         print('THE END')
+        
         break
     '''   
     try:
