@@ -63,6 +63,9 @@ class Game():
 
     def get_state(self) -> np.array:
         sstate = np.zeros((self.boardW, self.boardH))
+        if self.has_ended():
+            return sstate
+            
         for point in self.snake.get_points():
             sstate[point.x][point.y] = 1
         fstate = np.zeros_like(sstate)
@@ -90,18 +93,21 @@ class Game():
             self.spawn_food(new_position)
 
     def _check_colisions(self):
-        if self._wall_collision() or self._snake_collision():
+        head = self.snake.body[0]
+        if self._wall_collision(head) or self._snake_collision(head):
             self.snake.die()
 
-    def _wall_collision(self):
-        head = self.snake.body[0]
+    def _wall_collision(self, head):
         if head.x == 0 or head.x == self.boardH-1 or head.y == 0 or head.y == self.boardW-1:
             return True
         else:
             return False
 
-    def _snake_collision(self):
+    def _snake_collision(self, head):
         # TODO
+        for body_part in self.snake.body[1:]:
+            if body_part.x ==head.x and body_part.y == head.y:
+                return True
         return False
 
     def spawn_food(self, position):
@@ -164,7 +170,6 @@ class Snake():
 
     def get_points(self):
         return self.body
-        #raise NotImplementedError
 
 
 class Renderer():
