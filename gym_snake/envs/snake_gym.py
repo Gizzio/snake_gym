@@ -1,5 +1,5 @@
 import gym
-from snake import Game, Renderer, Input
+from gym_snake.envs.snake import Game, Renderer, Input
 
 
 class SnakeEnv(gym.Env):
