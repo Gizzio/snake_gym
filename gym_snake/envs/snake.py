@@ -180,6 +180,9 @@ class Renderer():
         self.screen = self.init_screen()
         self.window = self.init_window(h, w)
         self._render_first_frame()
+    
+    def set_game(self, game):
+        self.game=game
 
     def close_window(self):
         curses.endwin()
@@ -241,3 +244,17 @@ class KeyboardInput():
             curses.KEY_LEFT: 'L',
             -1: None
         }[i]
+
+
+class Input():
+    def __init__(self):
+        pass
+    
+    def translate(self, action: int):
+        return {
+        0: 'U',
+        1: 'R',
+        2: 'D',
+        3: 'L'
+    }[action]
+
