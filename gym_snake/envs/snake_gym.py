@@ -4,7 +4,6 @@ from gym import spaces
 H = 30
 W = 30
 dim = 2
-# TODO: add observation space and action space
 
 
 class SnakeEnv(gym.Env):
@@ -13,7 +12,7 @@ class SnakeEnv(gym.Env):
         self.renderer = Renderer(self.game)
         self.input = Input()
         self.action_space = spaces.Discrete(4)
-        self.observation_space = spaces.Box(low=0, high=1, shape=(H, W, dim))
+        self.observation_space = spaces.Box(low=0, high=1, shape=(H, W, dim), dtype=int)
 
     def step(self, action: int):
         self._take_action(action)
