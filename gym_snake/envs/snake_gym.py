@@ -7,9 +7,11 @@ dim = 2
 
 
 class SnakeEnv(gym.Env):
-    def __init__(self):
+    def __init__(self, human_mode=False):
         self.game = Game(h=H, w=W)
-        self.renderer = Renderer(self.game)
+        self.human_mode=human_mode
+        if human_mode: 
+            self.renderer = Renderer(self.game)
         self.input = Input()
         self.action_space = spaces.Discrete(4)
         self.observation_space = spaces.Box(low=0, high=1, shape=(H, W, dim), dtype=int)
@@ -24,12 +26,14 @@ class SnakeEnv(gym.Env):
 
     def reset(self):
         self.game = Game(h=H, w=W)
-        self.renderer.set_game(self.game)
+        if self.human_mode:
+            self.renderer.set_game(self.game)
         return self._get_state()
 
     def _render(self, mode, close):
         # TODO: change mode
-        self.renderer.render_frame()
+        if self.human_mode:
+            self.renderer.render_frame()
         # return self._get_state()
 
     def _take_action(self, action):
@@ -42,7 +46,7 @@ class SnakeEnv(gym.Env):
         pass
 
     def _get_state(self):
-        self.game.get_state()
+        return self.game.get_state()
 
     def _get_reward(self):
         return self.game.snake.has_eaten
