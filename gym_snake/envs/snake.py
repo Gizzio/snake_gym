@@ -21,7 +21,14 @@ class Food(NamedTuple):
 
 WALL = '#'
 SNAKE = 'S'
+HEAD = 'h'
 FOOD = '@'
+state_representation = {
+    WALL: 1,
+    SNAKE: 10,
+    HEAD: 50
+}
+
 X_START = 4
 Y_START = 4
 
@@ -63,11 +70,24 @@ class Game():
 
     def get_state(self) -> np.array:
         sstate = np.zeros((self.boardW, self.boardH))
+        hstate = np.zeros_like(sstate)
+        head_x, head_y = self.snake.get_points()[0]
+
         if self.has_ended():
-            return sstate
-            
+            return np.array((sstate, sstate))
+
+        for i in range(0, self.boardH):
+            sstate[0][i] = state_representation[WALL]
+            sstate[-1][i] = state_representation[WALL]
+
+        for i in range(0, self.boardW):
+            sstate[i][0] = state_representation[WALL]
+            sstate[i][-1] = state_representation[WALL]
+
         for point in self.snake.get_points():
-            sstate[point.x][point.y] = 1
+            sstate[point.x][point.y] = state_representation[SNAKE]
+
+        sstate[head_x][head_y] = state_representation[HEAD]
         fstate = np.zeros_like(sstate)
         fstate[self.food.position.x][self.food.position.y] = 1
 

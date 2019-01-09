@@ -1,9 +1,11 @@
 import gym
 from gym_snake.envs.snake import Game, Renderer, Input
 from gym import spaces
-H = 30
-W = 30
+# H = 30
+# W = 30
 dim = 2
+H = 8
+W = 8
 
 
 class SnakeEnv(gym.Env):
