@@ -71,11 +71,10 @@ class Game():
 
     def get_state(self) -> np.array:
         sstate = np.zeros((self.boardW, self.boardH))
-        hstate = np.zeros_like(sstate)
         head_x, head_y = self.snake.get_points()[0]
 
         if self.has_ended():
-            return np.array([sstate])
+            return np.expand_dims(sstate, axis=0)
 
         for i in range(0, self.boardH):
             sstate[0][i] = state_representation[WALL]
@@ -89,10 +88,9 @@ class Game():
             sstate[point.x][point.y] = state_representation[SNAKE]
 
         sstate[head_x][head_y] = state_representation[HEAD]
-        # fstate = np.zeros_like(sstate)
-        sstate[self.food.position.x][self.food.position.y] = 2137
+        sstate[self.food.position.x][self.food.position.y] = state_representation[FOOD]
 
-        return np.array([sstate])
+        return np.expand_dims(sstate, axis=0)
 
     def has_ended(self):
         return not self.snake.is_alive
