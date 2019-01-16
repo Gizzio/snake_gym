@@ -1,11 +1,10 @@
 import gym
 from gym_snake.envs.snake import Game, Renderer, Input
 from gym import spaces
-# H = 30
-# W = 30
-dim = 2
-H = 8
-W = 8
+
+dim = 1
+H = 10
+W = 10
 
 
 class SnakeEnv(gym.Env):
@@ -17,7 +16,7 @@ class SnakeEnv(gym.Env):
         self.input = Input()
         self.action_space = spaces.Discrete(4)
         self.observation_space = spaces.Box(
-            low=0, high=1, shape=(H, W, dim), dtype=int)
+            low=0, high=4, shape=(dim, H, W), dtype=int)
 
     def step(self, action: int):
         self._take_action(action)

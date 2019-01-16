@@ -24,15 +24,14 @@ SNAKE = 'S'
 HEAD = 'h'
 FOOD = '@'
 state_representation = {
-    SNAKE: 5,
-    HEAD: 10,
-    FOOD: 15,
-    WALL: 20
+    WALL: 1,
+    SNAKE: 2,
+    HEAD: 3,
+    FOOD: 4
 }
 
 X_START = 4
 Y_START = 4
-
 
 # przenieść do Input
 
@@ -59,7 +58,7 @@ class Game():
     @property
     def changed_tiles(self) -> list:
         tiles = self.snake.changed_tiles
-        return tiles + self.newfood
+        return tiles+self.newfood
 
     @property
     def tiles(self) -> list:
@@ -72,11 +71,10 @@ class Game():
 
     def get_state(self) -> np.array:
         sstate = np.zeros((self.boardW, self.boardH))
-        # hstate = np.zeros_like(sstate)
         head_x, head_y = self.snake.get_points()[0]
 
         if self.has_ended():
-            return sstate
+            return np.expand_dims(sstate, axis=0)
 
         for i in range(0, self.boardH):
             sstate[0][i] = state_representation[WALL]
@@ -90,11 +88,9 @@ class Game():
             sstate[point.x][point.y] = state_representation[SNAKE]
 
         sstate[head_x][head_y] = state_representation[HEAD]
-        # fstate = np.zeros_like(sstate)
-        # fstate[self.food.position.x][self.food.position.y] = 1
         sstate[self.food.position.x][self.food.position.y] = state_representation[FOOD]
 
-        return sstate
+        return np.expand_dims(sstate, axis=0)
 
     def has_ended(self):
         return not self.snake.is_alive
@@ -121,7 +117,7 @@ class Game():
             self.snake.die()
 
     def _wall_collision(self, head):
-        if head.x == 0 or head.x == self.boardH - 1 or head.y == 0 or head.y == self.boardW - 1:
+        if head.x == 0 or head.x == self.boardH-1 or head.y == 0 or head.y == self.boardW-1:
             return True
         else:
             return False
@@ -129,7 +125,7 @@ class Game():
     def _snake_collision(self, head):
         # TODO
         for body_part in self.snake.body[1:]:
-            if body_part.x == head.x and body_part.y == head.y:
+            if body_part.x ==head.x and body_part.y == head.y:
                 return True
         return False
 
@@ -139,8 +135,8 @@ class Game():
 
     def _random_empty_position(self):
         # TODO: checking if point is empty
-        x = random.randrange(self.boardW - 2) + 1
-        y = random.randrange(self.boardH - 2) + 1
+        x = random.randrange(self.boardW-2)+1
+        y = random.randrange(self.boardH-2)+1
         return Point(y, x)
 
 
@@ -163,8 +159,8 @@ class Snake():
 
     def _new_body(self, x, y):
         return [Point(x, y),
-                Point(x, y + 1),
-                Point(x, y + 2)]
+                Point(x, y+1),
+                Point(x, y+2)]
 
     def change_direction(self, new_dir):
         self.direction = new_dir
@@ -203,9 +199,9 @@ class Renderer():
         self.screen = self.init_screen()
         self.window = self.init_window(h, w)
         self._render_first_frame()
-
+    
     def set_game(self, game):
-        self.game = game
+        self.game=game
 
     def close_window(self):
         curses.endwin()
@@ -234,19 +230,19 @@ class Renderer():
     def _render_first_frame(self):
         tiles = self.game.tiles
         walls = self._walls()
-        self.add_tiles(tiles + walls)
+        self.add_tiles(tiles+walls)
 
     def _walls(self):
         borders = []
         h = self.game.boardH
         w = self.game.boardW
         # borders.append(Point(29, 29)) not working, curses bug
-        for i in range(h - 1):
+        for i in range(h-1):
             borders.append(Point(0, i))
-            borders.append(Point(w - 1, i))
-        for j in range(w - 1):
+            borders.append(Point(w-1, i))
+        for j in range(w-1):
             borders.append(Point(j, 0))
-            borders.append(Point(j, h - 1))
+            borders.append(Point(j, h-1))
         wall_tiles = [Tile(border, WALL) for border in borders]
         return wall_tiles
 
@@ -272,11 +268,12 @@ class KeyboardInput():
 class Input():
     def __init__(self):
         pass
-
+    
     def translate(self, action: int):
         return {
-            0: 'U',
-            1: 'R',
-            2: 'D',
-            3: 'L'
-        }[action]
+        0: 'U',
+        1: 'R',
+        2: 'D',
+        3: 'L'
+    }[action]
+
