@@ -1,4 +1,4 @@
-from gym_snake.envs.snake import Game, Renderer, KeyboardInput
+from snake import Game, Renderer, KeyboardInput
 
 H = 30
 W = 30
