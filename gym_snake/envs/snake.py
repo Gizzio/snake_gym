@@ -4,6 +4,31 @@ import random
 import numpy as np
 import curses
 
+X_START = 4
+Y_START = 4
+
+WALL = '#'
+SNAKE = 'S'
+HEAD = 'h'
+FOOD = '@'
+
+state_representation = {
+    WALL: 1,
+    SNAKE: 2,
+    HEAD: 3,
+    FOOD: 4
+}
+
+
+def trans_dir(i):
+    # TODO: change to constants
+    return {
+        'U': (0, -1),
+        'R': (1, 0),
+        'D': (0, 1),
+        'L': (-1, 0)
+    }[i]
+
 
 class Point(NamedTuple):
     x: int
@@ -17,33 +42,6 @@ class Tile(NamedTuple):
 
 class Food(NamedTuple):
     tile: Tile
-
-
-WALL = '#'
-SNAKE = 'S'
-HEAD = 'h'
-FOOD = '@'
-state_representation = {
-    WALL: 1,
-    SNAKE: 2,
-    HEAD: 3,
-    FOOD: 4
-}
-
-X_START = 4
-Y_START = 4
-
-# przenieść do Input
-
-
-def trans_dir(i):
-    # TODO: change to constants
-    return {
-        'U': (0, -1),
-        'R': (1, 0),
-        'D': (0, 1),
-        'L': (-1, 0)
-    }[i]
 
 
 class Game():
@@ -71,7 +69,7 @@ class Game():
 
     def get_state(self) -> np.array:
         sstate = np.zeros((self.boardW, self.boardH))
-        head_x, head_y = self.snake.get_points()[0]
+        head_x, head_y = self.snake.head
 
         if self.has_ended():
             return np.expand_dims(sstate, axis=0)
@@ -112,7 +110,7 @@ class Game():
             self.spawn_food(new_position)
 
     def _check_colisions(self):
-        head = self.snake.body[0]
+        head = self.snake.head
         if self._wall_collision(head) or self._snake_collision(head):
             self.snake.die()
 
@@ -123,7 +121,6 @@ class Game():
             return False
 
     def _snake_collision(self, head):
-        # TODO
         for body_part in self.snake.body[1:]:
             if body_part.x ==head.x and body_part.y == head.y:
                 return True
@@ -170,14 +167,15 @@ class Snake():
         self._move()
 
     def _move(self):
-        d = self.direction
+        direction_x, direction_y = self.direction
         # adding direction point-wise
-        new_head = Point(self.body[0].x + d[0], self.body[0].y + d[1])
+        new_head = Point(self.head.x + direction_x,
+                         self.head.y + direction_y)
         self.body.insert(0, new_head)
         self.changed_tiles.append(Tile(new_head, SNAKE))
         if not self.has_eaten:
-            self.changed_tiles.append(Tile(self.body[-1], ' '))
-            del self.body[-1]
+            self.changed_tiles.append(Tile(self.body[-1], ' ')) #removing last element of body from screen
+            del self.body[-1] 
 
         self.has_eaten = 0
 
@@ -190,6 +188,9 @@ class Snake():
     def get_points(self):
         return self.body
 
+    @property
+    def head(self):
+        return self.body[0]
 
 class Renderer():
     def __init__(self, game: Game):
@@ -219,18 +220,19 @@ class Renderer():
 
     def render_frame(self):
         changed_tiles = self.game.changed_tiles
-        self.add_tiles(changed_tiles)
+        self.display_tiles(changed_tiles)
 
-    def add_tiles(self, tiles):
+    def display_tiles(self, tiles):
         for tile in tiles:
-            position = tile.position
             # print symbol on given position (also ' ' for removing symbols)
-            self.window.addch(position.y, position.x, tile.kind)
+            self.window.addch(tile.position.y,
+                              tile.position.x,
+                              tile.kind)
 
     def _render_first_frame(self):
         tiles = self.game.tiles
         walls = self._walls()
-        self.add_tiles(tiles+walls)
+        self.display_tiles(tiles+walls)
 
     def _walls(self):
         borders = []
