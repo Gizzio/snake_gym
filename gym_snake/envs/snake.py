@@ -160,7 +160,11 @@ class Snake():
                 Point(x, y+2)]
 
     def change_direction(self, new_dir):
-        self.direction = new_dir
+        #change direction only when not trying to go backward
+        if self.direction != (-new_dir[0], -new_dir[1]):
+            self.direction = new_dir
+
+            
 
     def update(self):
         self.changed_tiles = []
