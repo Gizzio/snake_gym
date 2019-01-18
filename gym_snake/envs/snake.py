@@ -24,7 +24,7 @@ SNAKE = 'S'
 HEAD = 'h'
 FOOD = '@'
 state_representation = {
-    WALL: 0,
+    WALL: 1,
     SNAKE: 2,
     HEAD: 3,
     FOOD: 4
