@@ -50,4 +50,4 @@ class SnakeEnv(gym.Env):
         return self.game.get_state()
 
     def _get_reward(self):
-        return self.game.snake.has_eaten*len(self.game.snake.body)-3
+        return self.game.snake.has_eaten*(len(self.game.snake.body)-3)
