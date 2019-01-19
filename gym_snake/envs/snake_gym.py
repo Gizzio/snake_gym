@@ -1,5 +1,5 @@
 import gym
-from gym_snake.envs.snake import Game, Renderer, Input
+from gym_snake.envs.snake import Game, Renderer, Input, KeyboardInput
 from gym import spaces
 
 dim = 1
@@ -13,6 +13,7 @@ class SnakeEnv(gym.Env):
         self.human_mode = human_mode
         if human_mode:
             self.renderer = Renderer(self.game)
+            self.keyboard_input=KeyboardInput(self.renderer.window)
         self.input = Input()
         self.action_space = spaces.Discrete(4)
         self.observation_space = spaces.Box(
@@ -24,6 +25,8 @@ class SnakeEnv(gym.Env):
         reward = self._get_reward()
         observation = self._get_state()
         episode_over = self._is_over()
+        if self.human_mode:
+            self._refresh_board()
 
         return observation, reward, episode_over, {}
 
@@ -33,12 +36,13 @@ class SnakeEnv(gym.Env):
             self.renderer.set_game(self.game)
         return self._get_state()
 
-    def _render(self, mode, close):
-        # TODO: change mode
-        if self.human_mode:
-            self.renderer.render_frame()
-        # return self._get_state()
-
+    def _refresh_board(self):
+        #clearing input buffer
+        _ = self.keyboard_input.get_input()
+        self.renderer.render_frame()
+        if self.game.has_ended():
+            self.renderer.close_window()
+                   
     def _take_action(self, action):
         d = self.input.translate(action)
         self.game.input(d)

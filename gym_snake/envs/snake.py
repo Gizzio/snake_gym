@@ -164,8 +164,6 @@ class Snake():
         if self.direction != (-new_dir[0], -new_dir[1]):
             self.direction = new_dir
 
-            
-
     def update(self):
         self.changed_tiles = []
         self._move()
@@ -196,13 +194,14 @@ class Snake():
     def head(self):
         return self.body[0]
 
+
 class Renderer():
     def __init__(self, game: Game):
         h = game.boardH
         w = game.boardW
         self.game = game
-        self.screen = self.init_screen()
-        self.window = self.init_window(h, w)
+        self.screen = self._init_screen()
+        self.window = self._init_window(h, w)
         self._render_first_frame()
     
     def set_game(self, game):
@@ -211,12 +210,12 @@ class Renderer():
     def close_window(self):
         curses.endwin()
 
-    def init_screen(self):
+    def _init_screen(self):
         screen = curses.initscr()
         curses.curs_set(0)
         return screen
 
-    def init_window(self, h, w):
+    def _init_window(self, h, w):
         window = curses.newwin(h, w, 0, 0)
         window.keypad(1)
         window.timeout(100)
@@ -224,9 +223,9 @@ class Renderer():
 
     def render_frame(self):
         changed_tiles = self.game.changed_tiles
-        self.display_tiles(changed_tiles)
+        self._display_tiles(changed_tiles)
 
-    def display_tiles(self, tiles):
+    def _display_tiles(self, tiles):
         for tile in tiles:
             # print symbol on given position (also ' ' for removing symbols)
             self.window.addch(tile.position.y,
@@ -236,7 +235,7 @@ class Renderer():
     def _render_first_frame(self):
         tiles = self.game.tiles
         walls = self._walls()
-        self.display_tiles(tiles+walls)
+        self._display_tiles(tiles+walls)
 
     def _walls(self):
         borders = []
