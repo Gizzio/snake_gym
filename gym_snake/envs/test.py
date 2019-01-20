@@ -1,7 +1,7 @@
 from snake import Game, Renderer, KeyboardInput
 
-H = 30
-W = 30
+H = 10
+W = 10
 
 game = Game(H, W)
 renderer = Renderer(game)
@@ -12,13 +12,13 @@ while True:
     action = input.get_input()
     if action:
         game.input(action)
-    game.update()
 
+    game.update()
     if game.has_ended():
         renderer.close_window()
         print('THE END')
-        
         break
+
     '''   
     try:
         change = game.changed_tiles

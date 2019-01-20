@@ -67,28 +67,27 @@ class Game():
 
         return tiles
 
-    def get_state(self) -> np.array:
-        sstate = np.zeros((self.boardW, self.boardH))
-        head_x, head_y = self.snake.head
-
+    def get_observation(self) -> np.array:
+        observation = np.zeros((self.boardW, self.boardH))
         if self.has_ended():
-            return np.expand_dims(sstate, axis=0)
+            return observation
 
         for i in range(0, self.boardH):
-            sstate[0][i] = state_representation[WALL]
-            sstate[-1][i] = state_representation[WALL]
+            observation[0][i] = state_representation[WALL]
+            observation[-1][i] = state_representation[WALL]
 
         for i in range(0, self.boardW):
-            sstate[i][0] = state_representation[WALL]
-            sstate[i][-1] = state_representation[WALL]
+            observation[i][0] = state_representation[WALL]
+            observation[i][-1] = state_representation[WALL]
 
         for point in self.snake.get_points():
-            sstate[point.x][point.y] = state_representation[SNAKE]
+            observation[point.x][point.y] = state_representation[SNAKE]
 
-        sstate[head_x][head_y] = state_representation[HEAD]
-        sstate[self.food.position.x][self.food.position.y] = state_representation[FOOD]
+        head_x, head_y = self.snake.head
+        observation[head_x][head_y] = state_representation[HEAD]
+        observation[self.food.position.x][self.food.position.y] = state_representation[FOOD]
 
-        return np.expand_dims(sstate, axis=0)
+        return observation
 
     def has_ended(self):
         return not self.snake.is_alive
@@ -131,10 +130,17 @@ class Game():
         self.newfood = [self.food]
 
     def _random_empty_position(self):
-        # TODO: checking if point is empty
-        x = random.randrange(self.boardW-2)+1
-        y = random.randrange(self.boardH-2)+1
-        return Point(y, x)
+        snake_points = self.snake.get_points()
+        not_empty = True
+        while not_empty:
+            x = np.random.randint(1,self.boardW-1)
+            y = np.random.randint(1,self.boardH-1)
+            not_empty = False
+            for point in snake_points:
+                if point.x == x and point.y == y:
+                    not_empty = True
+
+        return Point(x, y)
 
 
 class Snake():
@@ -142,7 +148,7 @@ class Snake():
         self.has_eaten = 0
         self.is_alive = True
         self.body = self._new_body(x, y)
-        self.direction = (1, 0)
+        self.direction = (0, -1)
         self.changed_tiles = []
 
     @property

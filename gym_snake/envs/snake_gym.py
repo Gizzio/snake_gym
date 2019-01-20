@@ -2,7 +2,6 @@ import gym
 from gym_snake.envs.snake import Game, Renderer, Input, KeyboardInput
 from gym import spaces
 
-dim = 1
 H = 10
 W = 10
 
@@ -17,7 +16,7 @@ class SnakeEnv(gym.Env):
         self.input = Input()
         self.action_space = spaces.Discrete(4)
         self.observation_space = spaces.Box(
-            low=0, high=4, shape=(dim, H, W), dtype=int)
+            low=0, high=4, shape=(H, W), dtype=int)
 
     def step(self, action: int):
         self._take_action(action)
@@ -51,7 +50,7 @@ class SnakeEnv(gym.Env):
         return self.game.has_ended()
 
     def _get_state(self):
-        return self.game.get_state()
+        return self.game.get_observation()
 
     def _get_reward(self):
         return self.game.snake.has_eaten
