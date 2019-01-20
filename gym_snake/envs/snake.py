@@ -212,6 +212,7 @@ class Renderer():
     
     def set_game(self, game):
         self.game=game
+        self._render_first_frame()
 
     def close_window(self):
         curses.endwin()
@@ -239,6 +240,7 @@ class Renderer():
                               tile.kind)
 
     def _render_first_frame(self):
+        self.window.erase()
         tiles = self.game.tiles
         walls = self._walls()
         self._display_tiles(tiles+walls)
