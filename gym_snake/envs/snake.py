@@ -19,15 +19,12 @@ state_representation = {
     FOOD: 4
 }
 
-
-def trans_dir(i):
-    # TODO: change to constants
-    return {
-        'U': (0, -1),
-        'R': (1, 0),
-        'D': (0, 1),
-        'L': (-1, 0)
-    }[i]
+DIRS = [
+    (0, -1),
+    (1, 0),
+    (0, 1),
+    (-1, 0)
+]
 
 
 class Point(NamedTuple):
@@ -93,7 +90,16 @@ class Game():
         return not self.snake.is_alive
 
     def input(self, input: str):
-        self.snake.change_direction(trans_dir(input))
+        # 'L' left, 'A' ahead, 'R' right
+        old_dir_idx = DIRS.index(self.snake.direction)
+        if input == 'L':
+            new_dir_idx = (old_dir_idx + 1) % len(DIRS)
+        elif input == 'R':
+            new_dir_idx = (old_dir_idx - 1) % len(DIRS)
+        else:
+            new_dir_idx = old_dir_idx
+
+        self.snake.change_direction(DIRS[new_dir_idx])
 
     def update(self):
         self.newfood = []
@@ -270,9 +276,8 @@ class KeyboardInput():
 
     def translate_input(self, i):
         return {
-            curses.KEY_UP: 'U',
+            curses.KEY_UP: 'A',
             curses.KEY_RIGHT: 'R',
-            curses.KEY_DOWN: 'D',
             curses.KEY_LEFT: 'L',
             -1: None
         }[i]
@@ -284,9 +289,8 @@ class Input():
     
     def translate(self, action: int):
         return {
-        0: 'U',
-        1: 'R',
-        2: 'D',
-        3: 'L'
+        0: 'L',  #left
+        1: 'A',  #ahead
+        2: 'R',  #right
     }[action]
 

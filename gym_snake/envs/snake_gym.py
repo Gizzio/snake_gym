@@ -14,7 +14,7 @@ class SnakeEnv(gym.Env):
             self.renderer = Renderer(self.game)
             self.keyboard_input=KeyboardInput(self.renderer.window)
         self.input = Input()
-        self.action_space = spaces.Discrete(4)
+        self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(
             low=0, high=4, shape=(H, W), dtype=int)
 
